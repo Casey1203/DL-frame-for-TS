@@ -1,7 +1,7 @@
 # coding: utf-8
 
 from src.wavelet.dwt import dwt
-from src.util.datalayer.data_loader import DataAPILoader
+from src.util.datalayer.file_loader import FileLoader
 
 
 
@@ -16,6 +16,7 @@ def train():
 def evaluate():
 	pass
 
+
 def split_train_test(x_data, train_ratio=0.7):
 	x_data_size = len(x_data)
 	train_index_end = x_data_size * train_ratio
@@ -23,12 +24,17 @@ def split_train_test(x_data, train_ratio=0.7):
 	test_x = x_data[train_index_end:]
 	return train_x, test_x
 
+
 def main():
-	loader = DataAPILoader()
+	loader = FileLoader()
 	begin_date = '20080101'
 	end_date = '20180701'
-	close_index = loader.get_market_index_daily(index_ticker='0003000', begin_date=begin_date, end_date=end_date)
+	file_path = '../data/RawData.xlsx'
+	raw_data = loader.get_local_csv_file(file_path)
+
 	train_close_index, test_close_index = split_train_test(close_index)
+	a, d_vec = dwt(train_close_index, 'db1', level=2)
+
 
 
 
