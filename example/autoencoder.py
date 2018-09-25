@@ -3,7 +3,7 @@ import numpy as np
 
 from keras.layers import Input, Dense
 from keras.models import Model
-
+import os
 
 encoding_dim = 32
 input_img = Input(shape=(784, )) # placeholder
@@ -14,8 +14,9 @@ autoencoder = Model(input_img, decoded)
 
 autoencoder.compile(optimizer='adadelta', loss='binary_crossentropy')
 
-
-(x_train, _), (x_test, _) = mnist.load_data()
+file_path = os.path.abspath(__file__)
+data_path = '/'.join(file_path.split('/')[:-1] + ['mnist.npz'])
+(x_train, _), (x_test, _) = mnist.load_data(data_path)
 # normalize
 x_train = x_train.astype('float32') / 255
 x_test = x_test.astype('float32') / 255
