@@ -4,7 +4,7 @@ from keras.models import Model
 import numpy as np
 
 class dA(object): # one hidden layer denoise
-	def __init__(self, n_visible, n_hidden, rng=None):
+	def __init__(self, n_visible, n_hidden, W=None, rng=None):
 		self.n_visible = n_visible
 		self.n_hidden = n_hidden
 		if rng is None:
@@ -12,19 +12,11 @@ class dA(object): # one hidden layer denoise
 		self.rng = rng
 
 		self.input = Input(shape=(n_visible,)) # placeholder
-
-		encoded = self.get_hidden_values(self.input)
-		decoded = self.get_recontructed_input(encoded)
+		encoded = Dense(self.n_hidden, activation='sigmoid', kernel_initializer=W)(input)
+		decoded = Dense(self.n_visible, activation='sigmoid')(encoded)
 
 		self.autoencoder = Model(self.input, decoded)
 		self.autoencoder.compile(optimizer='adadelta', loss='binary_crossentropy')
-
-	# encode
-	def get_hidden_values(self, input):
-		return Dense(self.n_hidden, activation='sigmoid')(input)
-
-	def get_recontructed_input(self, hidden):
-		return Dense(self.n_visible, activation='sigmoid')(hidden)
 
 	def get_corrupted_input(self, input, corruption_level): # add noise
 		assert corruption_level < 1
